@@ -1,3 +1,22 @@
+// تفعيل القائمة المتنقلة
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navMenu = document.getElementById('nav-menu');
+    
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+            navMenu.classList.toggle('show');
+        });
+    }
+    
+    // إغلاق القائمة عند النقر خارجها
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('nav') && navMenu.classList.contains('show')) {
+            navMenu.classList.remove('show');
+        }
+    });
+});
+
 // إضافة وإزالة البنود ديناميكياً
 document.getElementById('add-income-item').addEventListener('click', function() {
     const table = document.getElementById('income-statement').getElementsByTagName('tbody')[0];
@@ -32,7 +51,7 @@ document.getElementById('add-income-item').addEventListener('click', function() 
     
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
-    removeButton.className = 'btn btn-danger remove-row';
+    removeButton.className = 'btn btn-danger btn-small remove-row';
     removeButton.textContent = 'حذف';
     removeButton.addEventListener('click', function() {
         table.deleteRow(newRow.rowIndex - 1);
@@ -73,7 +92,7 @@ document.getElementById('add-balance-item').addEventListener('click', function()
     
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
-    removeButton.className = 'btn btn-danger remove-row';
+    removeButton.className = 'btn btn-danger btn-small remove-row';
     removeButton.textContent = 'حذف';
     removeButton.addEventListener('click', function() {
         table.deleteRow(newRow.rowIndex - 1);
@@ -221,99 +240,3 @@ document.getElementById('financial-data-form').addEventListener('submit', functi
     
     // حساب التدفق النقدي الحر للمستثمرين
     const operatingCashFlow2025 = netProfit2025 + (opex2025 * 0.3); // تقدير مبسط
-    const capitalExpenditures2025 = fixedAssets2025 - fixedAssets2024;
-    const freeCashFlow2025 = operatingCashFlow2025 - capitalExpenditures2025;
-    
-    // عرض النتائج
-    document.getElementById('results').style.display = 'block';
-    document.getElementById('analysis').style.display = 'block';
-    
-    const resultsContainer = document.getElementById('results-container');
-    resultsContainer.innerHTML = `
-        <div class="result-card">
-            <h3>هامش الربح الإجمالي</h3>
-            <div class="result-value ${grossMargin2025 > grossMargin2024 ? 'positive' : 'negative'}">${grossMargin2025.toFixed(2)}%</div>
-            <p>السنة السابقة: ${grossMargin2024.toFixed(2)}%</p>
-        </div>
-        <div class="result-card">
-            <h3>هامش الربح التشغيلي</h3>
-            <div class="result-value ${operatingMargin2025 > operatingMargin2024 ? 'positive' : 'negative'}">${operatingMargin2025.toFixed(2)}%</div>
-            <p>السنة السابقة: ${operatingMargin2024.toFixed(2)}%</p>
-        </div>
-        <div class="result-card">
-            <h3>صافي هامش الربح</h3>
-            <div class="result-value ${netMargin2025 > netMargin2024 ? 'positive' : 'negative'}">${netMargin2025.toFixed(2)}%</div>
-            <p>السنة السابقة: ${netMargin2024.toFixed(2)}%</p>
-        </div>
-        <div class="result-card">
-            <h3>النسبة الحالية</h3>
-            <div class="result-value ${currentRatio2025 > 1.5 ? 'positive' : 'negative'}">${currentRatio2025.toFixed(2)}</div>
-            <p>السنة السابقة: ${currentRatio2024.toFixed(2)}</p>
-        </div>
-        <div class="result-card">
-            <h3>نسبة الدين إلى حقوق الملكية</h3>
-            <div class="result-value ${debtToEquity2025 < 1 ? 'positive' : 'negative'}">${debtToEquity2025.toFixed(2)}</div>
-            <p>السنة السابقة: ${debtToEquity2024.toFixed(2)}</p>
-        </div>
-        <div class="result-card">
-            <h3>العائد على حقوق المساهمين</h3>
-            <div class="result-value ${returnOnEquity2025 > 10 ? 'positive' : 'negative'}">${returnOnEquity2025.toFixed(2)}%</div>
-            <p>السنة السابقة: ${returnOnEquity2024.toFixed(2)}%</p>
-        </div>
-        <div class="result-card">
-            <h3>نمو الإيرادات</h3>
-            <div class="result-value ${revenueGrowth > 0 ? 'positive' : 'negative'}">${revenueGrowth.toFixed(2)}%</div>
-        </div>
-        <div class="result-card">
-            <h3>نمو صافي الربح</h3>
-            <div class="result-value ${netProfitGrowth > 0 ? 'positive' : 'negative'}">${netProfitGrowth.toFixed(2)}%</div>
-        </div>
-        <div class="result-card">
-            <h3>التدفق النقدي الحر</h3>
-            <div class="result-value ${freeCashFlow2025 > 0 ? 'positive' : 'negative'}">${freeCashFlow2025.toLocaleString()} ج.م</div>
-        </div>
-    `;
-    
-    // التحليل والتقييم
-    const analysisContainer = document.getElementById('analysis-container');
-    
-    let leverageAnalysis = '';
-    if (debtToEquity2025 < 0.5) {
-        leverageAnalysis = 'الشركة تعتمد بشكل محدود على الديون ولديها هيكل تمويل محافظ.';
-    } else if (debtToEquity2025 < 1) {
-        leverageAnalysis = 'الشركة تستخدم مزيجاً متوازناً من الديون وحقوق الملكية في التمويل.';
-    } else {
-        leverageAnalysis = 'الشركة تعتمد بشكل كبير على الديون مما يزيد من المخاطر المالية.';
-    }
-    
-    let growthAnalysis = '';
-    if (revenueGrowth > 15) {
-        growthAnalysis = 'الشركة تنمو بمعدل مرتفع مما يشير إلى أداء قوي.';
-    } else if (revenueGrowth > 5) {
-        growthAnalysis = 'الشركة تنمو بمعدل معتدل ومستقر.';
-    } else {
-        growthAnalysis = 'الشركة تشهد نمواً محدوداً أو انكماشاً في الإيرادات.';
-    }
-    
-    let valuation = totalAssets2025 + (netProfit2025 * 5); // تقدير مبسط للتقييم
-    
-    analysisContainer.innerHTML = `
-        <div class="analysis-item">
-            <h3>الرفع المالي</h3>
-            <p>${leverageAnalysis} نسبة الدين إلى حقوق الملكية الحالية هي ${debtToEquity2025.toFixed(2)}.</p>
-        </div>
-        <div class="analysis-item">
-            <h3>معدل النمو</h3>
-            <p>${growthAnalysis} نمو الإيرادات بلغ ${revenueGrowth.toFixed(2)}% ونمو صافي الربح بلغ ${netProfitGrowth.toFixed(2)}%.</p>
-        </div>
-        <div class="analysis-item">
-            <h3>التقييم</h3>
-            <p>التقييم التقديري لإجمالي الشركة هو ${valuation.toLocaleString()} جنيه مصري.</p>
-        </div>
-        <div class="analysis-item">
-            <h3>السيولة</h3>
-            <p>النسبة الحالية ${currentRatio2025.toFixed(2)} ${currentRatio2025 > 1.5 ? 'تشير إلى سيولة جيدة' : 'قد تشير إلى تحديات في السيولة'}.</p>
-        </div>
-        <div class="analysis-item">
-            <h3>الكفاءة التشغيلية</h3>
-            <p>هامش الربح الإجمالي ${grossMargin2025.toFixed(2)}% وهام
