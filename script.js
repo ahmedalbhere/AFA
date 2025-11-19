@@ -1,363 +1,312 @@
-// بيانات التطبيق
-let userData = {
-    userType: '',
-    gender: '',
-    area: '',
-    type: '',
-    studentGender: '',
-    studentArea: '',
-    studentType: '',
-    details: '',
-    price: '',
-    contact: ''
-};
-
-// تهيئة Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyC4wG7v5Q8b6Q3Q2Q1Q0Q9Q8Q7Q6Q5Q4Q3",
-    authDomain: "pharmase-9d8bc.firebaseapp.com",
-    databaseURL: "https://pharmase-9d8bc-default-rtdb.firebaseio.com",
-    projectId: "pharmase-9d8bc",
-    storageBucket: "pharmase-9d8bc.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdefghijklmnopqrstuv"
-};
-
-// تهيئة Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
-// تهيئة التطبيق عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    // إخفاء شاشة التحميل بعد تحميل الصفحة
-    setTimeout(() => {
-        document.getElementById('loader').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-        }, 500);
-    }, 1500);
-    
-    // إعداد معالج النماذج
-    document.getElementById('owner-form').addEventListener('submit', handleOwnerFormSubmit);
-});
-
-// اختيار نوع المستخدم
-function selectUserType(type) {
-    userData.userType = type;
-    
-    if (type === 'owner') {
-        navigateToPage('owner-gender-page');
-    } else if (type === 'student') {
-        navigateToPage('student-gender-page');
-    }
+/* التنسيقات العامة */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// اختيار خيار في النماذج
-function selectOption(field, value) {
-    userData[field] = value;
-    
-    // تحديد الصفحة التالية بناءً على الصفحة الحالية
-    const currentPage = document.querySelector('.page.active').id;
-    
-    if (currentPage === 'owner-gender-page') {
-        navigateToPage('owner-area-page');
-    } else if (currentPage === 'owner-area-page') {
-        navigateToPage('owner-type-page');
-    } else if (currentPage === 'owner-type-page') {
-        navigateToPage('owner-details-page');
-    } else if (currentPage === 'student-gender-page') {
-        navigateToPage('student-area-page');
-    } else if (currentPage === 'student-area-page') {
-        navigateToPage('student-type-page');
-    } else if (currentPage === 'student-type-page') {
-        // البحث عن الوحدات المتاحة وعرض النتائج
-        searchListings();
-        navigateToPage('student-results-page');
-    }
+:root {
+    --primary: #6C63FF;
+    --primary-dark: #564FD8;
+    --primary-light: #8B85FF;
+    --secondary: #FF6584;
+    --secondary-dark: #E04A6D;
+    --dark: #121212;
+    --dark-light: #1E1E1E;
+    --darker: #0A0A0A;
+    --text: #E0E0E0;
+    --text-light: #A0A0A0;
+    --text-lighter: #707070;
+    --success: #4CAF50;
+    --warning: #FF9800;
+    --error: #F44336;
+    --border: #333333;
+    --border-light: #444444;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.2);
+    --shadow-dark: 0 15px 40px rgba(0, 0, 0, 0.4);
+    --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    --gradient-dark: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
 }
 
-// التنقل بين الصفحات
-function navigateToPage(pageId) {
-    // إخفاء جميع الصفحات
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    // إظهار الصفحة المطلوبة
-    document.getElementById(pageId).classList.add('active');
-    
-    // التمرير إلى أعلى الصفحة
-    window.scrollTo(0, 0);
+body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--gradient-dark);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+    overflow-x: hidden;
+    line-height: 1.6;
 }
 
-// العودة للصفحة السابقة
-function goBack() {
-    const currentPage = document.querySelector('.page.active').id;
-    let previousPage = '';
-    
-    // تحديد الصفحة السابقة بناءً على الصفحة الحالية
-    switch(currentPage) {
-        case 'owner-gender-page':
-            previousPage = 'main-page';
-            break;
-        case 'owner-area-page':
-            previousPage = 'owner-gender-page';
-            break;
-        case 'owner-type-page':
-            previousPage = 'owner-area-page';
-            break;
-        case 'owner-details-page':
-            previousPage = 'owner-type-page';
-            break;
-        case 'student-gender-page':
-            previousPage = 'main-page';
-            break;
-        case 'student-area-page':
-            previousPage = 'student-gender-page';
-            break;
-        case 'student-type-page':
-            previousPage = 'student-area-page';
-            break;
-        case 'student-results-page':
-            previousPage = 'student-type-page';
-            break;
-        default:
-            previousPage = 'main-page';
-    }
-    
-    navigateToPage(previousPage);
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-// العودة للصفحة الرئيسية
-function goToMainPage() {
-    navigateToPage('main-page');
-    resetUserData();
+/* شاشة التحميل */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--darker);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
 }
 
-// إعادة تعيين بيانات المستخدم
-function resetUserData() {
-    userData = {
-        userType: '',
-        gender: '',
-        area: '',
-        type: '',
-        studentGender: '',
-        studentArea: '',
-        studentType: '',
-        details: '',
-        price: '',
-        contact: ''
-    };
-    
-    // إعادة تعيين النموذج
-    document.getElementById('owner-form').reset();
+.loader-content {
+    text-align: center;
+    animation: fadeInUp 0.8s ease;
 }
 
-// معالجة نموذج المالك
-function handleOwnerFormSubmit(e) {
-    e.preventDefault();
-    
-    // جمع البيانات من النموذج
-    userData.details = document.getElementById('details').value;
-    userData.price = document.getElementById('price').value;
-    userData.contact = document.getElementById('contact').value;
-    
-    // التحقق من اكتمال البيانات
-    if (!userData.details || !userData.price || !userData.contact) {
-        alert('يرجى ملء جميع الحقول المطلوبة');
-        return;
-    }
-    
-    // إضافة الوحدة إلى قاعدة البيانات
-    addListing();
-    
-    // الانتقال إلى صفحة التأكيد
-    navigateToPage('confirmation-page');
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+    flex-direction: column;
 }
 
-// إضافة وحدة سكنية جديدة إلى Firebase
-function addListing() {
-    const newListing = {
-        id: Date.now(),
-        gender: userData.gender,
-        area: userData.area,
-        type: userData.type,
-        details: userData.details,
-        price: userData.price,
-        contact: userData.contact,
-        date: new Date().toLocaleDateString('ar-EG'),
-        timestamp: Date.now()
-    };
-    
-    // حفظ البيانات في Firebase
-    database.ref('listings/' + newListing.id).set(newListing)
-        .then(() => {
-            console.log('تم حفظ البيانات بنجاح');
-        })
-        .catch((error) => {
-            console.error('خطأ في حفظ البيانات:', error);
-            alert('حدث خطأ في حفظ البيانات. يرجى المحاولة مرة أخرى.');
-        });
+.logo i {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
 }
 
-// البحث عن الوحدات المتاحة للطالب من Firebase
-function searchListings() {
-    showLoading('listings-container');
-    
-    database.ref('listings').once('value')
-        .then((snapshot) => {
-            const listings = [];
-            snapshot.forEach((childSnapshot) => {
-                listings.push(childSnapshot.val());
-            });
-            
-            const filteredListings = listings.filter(listing => {
-                // تحويل "شاب" إلى "شباب" للتوافق مع بيانات المالكين
-                const studentGender = userData.studentGender === 'شاب' ? 'شباب' : userData.studentGender;
-                
-                return listing.gender === studentGender &&
-                       listing.area === userData.studentArea &&
-                       listing.type === userData.studentType;
-            });
-            
-            displayListings(filteredListings);
-        })
-        .catch((error) => {
-            console.error('خطأ في جلب البيانات:', error);
-            document.getElementById('listings-container').innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>حدث خطأ في جلب البيانات</h3>
-                    <p>يرجى المحاولة مرة أخرى لاحقاً</p>
-                </div>
-            `;
-        });
+.logo h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(108, 99, 255, 0.3);
 }
 
-// عرض الوحدات السكنية
-function displayListings(listingsToShow) {
-    const container = document.getElementById('listings-container');
-    
-    if (listingsToShow.length === 0) {
-        container.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-home"></i>
-                <h3>لا توجد وحدات متاحة</h3>
-                <p>لا توجد وحدات سكنية تطابق معايير البحث المحددة</p>
-                <button class="btn-primary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> تعديل معايير البحث
-                </button>
-            </div>
-        `;
-        return;
-    }
-    
-    // ترتيب الوحدات حسب الأحدث
-    listingsToShow.sort((a, b) => b.timestamp - a.timestamp);
-    
-    container.innerHTML = '';
-    
-    listingsToShow.forEach(listing => {
-        const listingCard = document.createElement('div');
-        listingCard.className = 'listing-card';
-        
-        listingCard.innerHTML = `
-            <div class="listing-header">
-                <div class="listing-title">${listing.type} ${listing.gender}</div>
-                <div class="listing-price">${listing.price} ج.م/شهر</div>
-            </div>
-            <div class="listing-details">
-                <span class="listing-detail">${listing.area}</span>
-                <span class="listing-detail">${listing.gender}</span>
-                <span class="listing-detail">${listing.type}</span>
-            </div>
-            <div class="listing-description">
-                ${listing.details}
-            </div>
-            <div class="listing-contact">
-                <div class="contact-info">
-                    <i class="fas fa-phone"></i>
-                    ${listing.contact}
-                </div>
-                <button class="contact-btn" onclick="contactOwner('${listing.contact}')">
-                    <i class="fas fa-comment"></i> تواصل
-                </button>
-            </div>
-            <div class="listing-date">
-                <small>تم الإضافة: ${listing.date}</small>
-            </div>
-        `;
-        
-        container.appendChild(listingCard);
-    });
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(108, 99, 255, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1.2s linear infinite;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.3);
 }
 
-// عرض شاشة التحميل
-function showLoading(containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>جاري البحث عن الوحدات المتاحة...</p>
-        </div>
-    `;
+/* الصفحات */
+.page {
+    display: none;
+    min-height: 100vh;
+    animation: fadeIn 0.6s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--gradient-dark);
 }
 
-// التواصل مع المالك
-function contactOwner(contactInfo) {
-    // يمكن إضافة منطق إضافي هنا مثل فتح تطبيق المراسلة
-    alert(`معلومات الاتصال: ${contactInfo}\n\nيمكنك الآن التواصل مع المالك مباشرة.`);
+.page.active {
+    display: block;
+    position: relative;
 }
 
-// إضافة بعض البيانات التجريبية إذا كانت قاعدة البيانات فارغة (للتجربة فقط)
-function addSampleData() {
-    database.ref('listings').once('value')
-        .then((snapshot) => {
-            if (!snapshot.exists()) {
-                const sampleListings = [
-                    {
-                        id: 1,
-                        gender: 'شباب',
-                        area: 'شرق',
-                        type: 'شقة',
-                        details: 'شقة مفروشة بالكامل بمنطقة هادئة قريبة من الجامعة، تحتوي على 3 غرف وصالة ومطبخ وحمامين',
-                        price: '1500',
-                        contact: '01012345678',
-                        date: '2023-10-15',
-                        timestamp: 1697385600000
-                    },
-                    {
-                        id: 2,
-                        gender: 'بنات',
-                        area: 'غرب',
-                        type: 'سرير',
-                        details: 'سرير في غرفة مشتركة مع طالبات، الشقة تحتوي على 3 غرف وحمام مشترك ومطبخ',
-                        price: '600',
-                        contact: '01123456789',
-                        date: '2023-10-10',
-                        timestamp: 1696953600000
-                    },
-                    {
-                        id: 3,
-                        gender: 'شباب',
-                        area: 'غرب',
-                        type: 'شقة',
-                        details: 'شقة جديدة بمنطقة غرب بني سويف، قريبة من وسائل المواصلات، تحتوي على غرفتين وصالة',
-                        price: '1200',
-                        contact: '01234567890',
-                        date: '2023-10-05',
-                        timestamp: 1696521600000
-                    }
-                ];
-                
-                sampleListings.forEach(listing => {
-                    database.ref('listings/' + listing.id).set(listing);
-                });
-                
-                console.log('تم إضافة البيانات التجريبية');
-            }
-        });
+/* الهيدر */
+header {
+    text-align: center;
+    padding: 30px 0;
+    margin-bottom: 40px;
+    animation: slideDown 0.8s ease;
 }
 
-// استدعاء هذه الدالة مرة واحدة لإضافة بيانات تجريبية (يمكن إزالتها لاحقاً)
-// addSampleData();
+.tagline {
+    color: var(--text-light);
+    font-size: 1.3rem;
+    margin-top: 15px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+/* المحتوى */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 0;
+    animation: fadeInUp 0.8s ease;
+}
+
+.content h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(108, 99, 255, 0.3);
+    line-height: 1.2;
+}
+
+.content p {
+    font-size: 1.3rem;
+    color: var(--text-light);
+    margin-bottom: 50px;
+    max-width: 700px;
+    line-height: 1.8;
+    font-weight: 300;
+}
+
+/* اختيار المستخدم */
+.user-selection {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.user-card {
+    background: var(--dark-light);
+    border-radius: 25px;
+    padding: 50px 40px;
+    width: 320px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    border: 2px solid transparent;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.user-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 0 20px 50px rgba(108, 99, 255, 0.3);
+}
+
+.user-card:hover::before {
+    transform: scaleX(1);
+}
+
+.user-card .icon {
+    font-size: 4rem;
+    margin-bottom: 25px;
+    color: var(--primary);
+    transition: all 0.3s ease;
+}
+
+.user-card:hover .icon {
+    transform: scale(1.1);
+    color: var(--secondary);
+}
+
+.user-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.user-card p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+/* شريط التقدم */
+.progress-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 60px;
+    gap: 15px;
+    position: relative;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 3px;
+    background: var(--border);
+    z-index: 1;
+}
+
+.progress-step {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--dark-light);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-weight: bold;
+    z-index: 2;
+    transition: all 0.4s ease;
+    border: 3px solid var(--border);
+}
+
+.progress-step.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.5);
+    border-color: var(--primary-light);
+    transform: scale(1.1);
+}
+
+.progress-step.completed {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+}
+
+.progress-step.completed::after {
+    content: "✓";
+    font-size: 1.2rem;
+}
+
+/* خيارات الشبكة */
+.options-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.option-card {
+    background: var(--dark-light);
+    border-radius: 25px;
+    padding: 50px 40px;
+    width: 280
