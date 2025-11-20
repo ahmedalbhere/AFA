@@ -1,363 +1,199 @@
-// بيانات التطبيق
-let userData = {
-    userType: '',
-    gender: '',
-    area: '',
-    type: '',
-    studentGender: '',
-    studentArea: '',
-    studentType: '',
-    details: '',
-    price: '',
-    contact: ''
-};
-
-// تهيئة Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyC4wG7v5Q8b6Q3Q2Q1Q0Q9Q8Q7Q6Q5Q4Q3",
-    authDomain: "pharmase-9d8bc.firebaseapp.com",
-    databaseURL: "https://pharmase-9d8bc-default-rtdb.firebaseio.com",
-    projectId: "pharmase-9d8bc",
-    storageBucket: "pharmase-9d8bc.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdefghijklmnopqrstuv"
-};
-
-// تهيئة Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
-// تهيئة التطبيق عند تحميل الصفحة
+// تفعيل القائمة المتنقلة
 document.addEventListener('DOMContentLoaded', function() {
-    // إخفاء شاشة التحميل بعد تحميل الصفحة
-    setTimeout(() => {
-        document.getElementById('loader').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-        }, 500);
-    }, 1500);
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navMenu = document.getElementById('nav-menu');
     
-    // إعداد معالج النماذج
-    document.getElementById('owner-form').addEventListener('submit', handleOwnerFormSubmit);
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+            navMenu.classList.toggle('show');
+        });
+    }
+    
+    // إغلاق القائمة عند النقر خارجها
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('nav') && navMenu.classList.contains('show')) {
+            navMenu.classList.remove('show');
+        }
+    });
+    
+    // تحديث الحسابات تلقائياً عند تغيير القيم
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', updateCalculations);
+    });
+    
+    // تحديث الحسابات الأولي
+    updateCalculations();
 });
 
-// اختيار نوع المستخدم
-function selectUserType(type) {
-    userData.userType = type;
+// إضافة بنود الأصول
+document.getElementById('add-asset-item').addEventListener('click', function() {
+    const category = prompt('اختر نوع الأصل:\n1- الأصول المتداولة\n2- الأصول الثابتة', '1');
+    let categoryName, categoryData;
     
-    if (type === 'owner') {
-        navigateToPage('owner-gender-page');
-    } else if (type === 'student') {
-        navigateToPage('student-gender-page');
-    }
-}
-
-// اختيار خيار في النماذج
-function selectOption(field, value) {
-    userData[field] = value;
-    
-    // تحديد الصفحة التالية بناءً على الصفحة الحالية
-    const currentPage = document.querySelector('.page.active').id;
-    
-    if (currentPage === 'owner-gender-page') {
-        navigateToPage('owner-area-page');
-    } else if (currentPage === 'owner-area-page') {
-        navigateToPage('owner-type-page');
-    } else if (currentPage === 'owner-type-page') {
-        navigateToPage('owner-details-page');
-    } else if (currentPage === 'student-gender-page') {
-        navigateToPage('student-area-page');
-    } else if (currentPage === 'student-area-page') {
-        navigateToPage('student-type-page');
-    } else if (currentPage === 'student-type-page') {
-        // البحث عن الوحدات المتاحة وعرض النتائج
-        searchListings();
-        navigateToPage('student-results-page');
-    }
-}
-
-// التنقل بين الصفحات
-function navigateToPage(pageId) {
-    // إخفاء جميع الصفحات
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    // إظهار الصفحة المطلوبة
-    document.getElementById(pageId).classList.add('active');
-    
-    // التمرير إلى أعلى الصفحة
-    window.scrollTo(0, 0);
-}
-
-// العودة للصفحة السابقة
-function goBack() {
-    const currentPage = document.querySelector('.page.active').id;
-    let previousPage = '';
-    
-    // تحديد الصفحة السابقة بناءً على الصفحة الحالية
-    switch(currentPage) {
-        case 'owner-gender-page':
-            previousPage = 'main-page';
-            break;
-        case 'owner-area-page':
-            previousPage = 'owner-gender-page';
-            break;
-        case 'owner-type-page':
-            previousPage = 'owner-area-page';
-            break;
-        case 'owner-details-page':
-            previousPage = 'owner-type-page';
-            break;
-        case 'student-gender-page':
-            previousPage = 'main-page';
-            break;
-        case 'student-area-page':
-            previousPage = 'student-gender-page';
-            break;
-        case 'student-type-page':
-            previousPage = 'student-area-page';
-            break;
-        case 'student-results-page':
-            previousPage = 'student-type-page';
-            break;
-        default:
-            previousPage = 'main-page';
-    }
-    
-    navigateToPage(previousPage);
-}
-
-// العودة للصفحة الرئيسية
-function goToMainPage() {
-    navigateToPage('main-page');
-    resetUserData();
-}
-
-// إعادة تعيين بيانات المستخدم
-function resetUserData() {
-    userData = {
-        userType: '',
-        gender: '',
-        area: '',
-        type: '',
-        studentGender: '',
-        studentArea: '',
-        studentType: '',
-        details: '',
-        price: '',
-        contact: ''
-    };
-    
-    // إعادة تعيين النموذج
-    document.getElementById('owner-form').reset();
-}
-
-// معالجة نموذج المالك
-function handleOwnerFormSubmit(e) {
-    e.preventDefault();
-    
-    // جمع البيانات من النموذج
-    userData.details = document.getElementById('details').value;
-    userData.price = document.getElementById('price').value;
-    userData.contact = document.getElementById('contact').value;
-    
-    // التحقق من اكتمال البيانات
-    if (!userData.details || !userData.price || !userData.contact) {
-        alert('يرجى ملء جميع الحقول المطلوبة');
+    if (category === '1') {
+        categoryName = 'الأصول المتداولة';
+        categoryData = 'current-assets';
+    } else if (category === '2') {
+        categoryName = 'الأصول الثابتة';
+        categoryData = 'fixed-assets';
+    } else {
         return;
     }
     
-    // إضافة الوحدة إلى قاعدة البيانات
-    addListing();
+    const itemName = prompt('أدخل اسم البند:');
+    if (!itemName) return;
     
-    // الانتقال إلى صفحة التأكيد
-    navigateToPage('confirmation-page');
-}
+    addBalanceItem(categoryName, categoryData, itemName);
+});
 
-// إضافة وحدة سكنية جديدة إلى Firebase
-function addListing() {
-    const newListing = {
-        id: Date.now(),
-        gender: userData.gender,
-        area: userData.area,
-        type: userData.type,
-        details: userData.details,
-        price: userData.price,
-        contact: userData.contact,
-        date: new Date().toLocaleDateString('ar-EG'),
-        timestamp: Date.now()
-    };
+// إضافة بنود الخصوم وحقوق الملكية
+document.getElementById('add-liability-item').addEventListener('click', function() {
+    const category = prompt('اختر النوع:\n1- الخصوم المتداولة\n2- الخصوم طويلة الأجل\n3- حقوق الملكية', '1');
+    let categoryName, categoryData;
     
-    // حفظ البيانات في Firebase
-    database.ref('listings/' + newListing.id).set(newListing)
-        .then(() => {
-            console.log('تم حفظ البيانات بنجاح');
-        })
-        .catch((error) => {
-            console.error('خطأ في حفظ البيانات:', error);
-            alert('حدث خطأ في حفظ البيانات. يرجى المحاولة مرة أخرى.');
-        });
-}
-
-// البحث عن الوحدات المتاحة للطالب من Firebase
-function searchListings() {
-    showLoading('listings-container');
-    
-    database.ref('listings').once('value')
-        .then((snapshot) => {
-            const listings = [];
-            snapshot.forEach((childSnapshot) => {
-                listings.push(childSnapshot.val());
-            });
-            
-            const filteredListings = listings.filter(listing => {
-                // تحويل "شاب" إلى "شباب" للتوافق مع بيانات المالكين
-                const studentGender = userData.studentGender === 'شاب' ? 'شباب' : userData.studentGender;
-                
-                return listing.gender === studentGender &&
-                       listing.area === userData.studentArea &&
-                       listing.type === userData.studentType;
-            });
-            
-            displayListings(filteredListings);
-        })
-        .catch((error) => {
-            console.error('خطأ في جلب البيانات:', error);
-            document.getElementById('listings-container').innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>حدث خطأ في جلب البيانات</h3>
-                    <p>يرجى المحاولة مرة أخرى لاحقاً</p>
-                </div>
-            `;
-        });
-}
-
-// عرض الوحدات السكنية
-function displayListings(listingsToShow) {
-    const container = document.getElementById('listings-container');
-    
-    if (listingsToShow.length === 0) {
-        container.innerHTML = `
-            <div class="no-results">
-                <i class="fas fa-home"></i>
-                <h3>لا توجد وحدات متاحة</h3>
-                <p>لا توجد وحدات سكنية تطابق معايير البحث المحددة</p>
-                <button class="btn-primary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> تعديل معايير البحث
-                </button>
-            </div>
-        `;
+    if (category === '1') {
+        categoryName = 'الخصوم المتداولة';
+        categoryData = 'current-liabilities';
+    } else if (category === '2') {
+        categoryName = 'الخصوم طويلة الأجل';
+        categoryData = 'long-liabilities';
+    } else if (category === '3') {
+        categoryName = 'حقوق الملكية';
+        categoryData = 'equity';
+    } else {
         return;
     }
     
-    // ترتيب الوحدات حسب الأحدث
-    listingsToShow.sort((a, b) => b.timestamp - a.timestamp);
+    const itemName = prompt('أدخل اسم البند:');
+    if (!itemName) return;
     
-    container.innerHTML = '';
+    addBalanceItem(categoryName, categoryData, itemName);
+});
+
+// إضافة بنود قائمة الدخل
+document.getElementById('add-income-item').addEventListener('click', function() {
+    const itemName = prompt('أدخل اسم البند:');
+    if (!itemName) return;
     
-    listingsToShow.forEach(listing => {
-        const listingCard = document.createElement('div');
-        listingCard.className = 'listing-card';
-        
-        listingCard.innerHTML = `
-            <div class="listing-header">
-                <div class="listing-title">${listing.type} ${listing.gender}</div>
-                <div class="listing-price">${listing.price} ج.م/شهر</div>
-            </div>
-            <div class="listing-details">
-                <span class="listing-detail">${listing.area}</span>
-                <span class="listing-detail">${listing.gender}</span>
-                <span class="listing-detail">${listing.type}</span>
-            </div>
-            <div class="listing-description">
-                ${listing.details}
-            </div>
-            <div class="listing-contact">
-                <div class="contact-info">
-                    <i class="fas fa-phone"></i>
-                    ${listing.contact}
-                </div>
-                <button class="contact-btn" onclick="contactOwner('${listing.contact}')">
-                    <i class="fas fa-comment"></i> تواصل
-                </button>
-            </div>
-            <div class="listing-date">
-                <small>تم الإضافة: ${listing.date}</small>
-            </div>
-        `;
-        
-        container.appendChild(listingCard);
+    const table = document.getElementById('income-statement').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow(table.rows.length - 4); // إدراج قبل الصفوف المحسوبة
+    
+    const itemNameCell = newRow.insertCell(0);
+    const input2024Cell = newRow.insertCell(1);
+    const input2025Cell = newRow.insertCell(2);
+    const actionsCell = newRow.insertCell(3);
+    
+    itemNameCell.textContent = itemName;
+    
+    const input2024 = document.createElement('input');
+    input2024.type = 'number';
+    input2024.placeholder = '0';
+    input2024.className = 'income-input';
+    input2024.setAttribute('data-year', '2024');
+    input2024.setAttribute('data-item', 'custom');
+    input2024.addEventListener('input', updateCalculations);
+    input2024Cell.appendChild(input2024);
+    
+    const input2025 = document.createElement('input');
+    input2025.type = 'number';
+    input2025.placeholder = '0';
+    input2025.className = 'income-input';
+    input2025.setAttribute('data-year', '2025');
+    input2025.setAttribute('data-item', 'custom');
+    input2025.addEventListener('input', updateCalculations);
+    input2025Cell.appendChild(input2025);
+    
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'btn btn-danger btn-small remove-row';
+    removeButton.textContent = 'حذف';
+    removeButton.addEventListener('click', function() {
+        table.deleteRow(newRow.rowIndex - 1);
+        updateCalculations();
     });
+    actionsCell.appendChild(removeButton);
+    
+    updateCalculations();
+});
+
+// دالة مساعدة لإضافة بنود الميزانية
+function addBalanceItem(categoryName, categoryData, itemName) {
+    const table = document.getElementById('balance-sheet').getElementsByTagName('tbody')[0];
+    let insertIndex = -1;
+    
+    // البحث عن مكان الإدراج بناءً على القسم
+    for (let i = 0; i < table.rows.length; i++) {
+        if (table.rows[i].classList.contains('section-header') && 
+            table.rows[i].cells[0].textContent === categoryName) {
+            insertIndex = i + 1;
+            break;
+        }
+    }
+    
+    if (insertIndex === -1) return;
+    
+    const newRow = table.insertRow(insertIndex);
+    
+    const itemNameCell = newRow.insertCell(0);
+    const input2024Cell = newRow.insertCell(1);
+    const input2025Cell = newRow.insertCell(2);
+    const actionsCell = newRow.insertCell(3);
+    
+    itemNameCell.textContent = itemName;
+    
+    const input2024 = document.createElement('input');
+    input2024.type = 'number';
+    input2024.placeholder = '0';
+    input2024.className = 'balance-input';
+    input2024.setAttribute('data-category', categoryData);
+    input2024.setAttribute('data-year', '2024');
+    input2024.setAttribute('data-item', 'custom');
+    input2024.addEventListener('input', updateCalculations);
+    input2024Cell.appendChild(input2024);
+    
+    const input2025 = document.createElement('input');
+    input2025.type = 'number';
+    input2025.placeholder = '0';
+    input2025.className = 'balance-input';
+    input2025.setAttribute('data-category', categoryData);
+    input2025.setAttribute('data-year', '2025');
+    input2025.setAttribute('data-item', 'custom');
+    input2025.addEventListener('input', updateCalculations);
+    input2025Cell.appendChild(input2025);
+    
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'btn btn-danger btn-small remove-row';
+    removeButton.textContent = 'حذف';
+    removeButton.addEventListener('click', function() {
+        table.deleteRow(newRow.rowIndex - 1);
+        updateCalculations();
+    });
+    actionsCell.appendChild(removeButton);
+    
+    updateCalculations();
 }
 
-// عرض شاشة التحميل
-function showLoading(containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>جاري البحث عن الوحدات المتاحة...</p>
-        </div>
-    `;
-}
+// إضافة حدث لحذف الصفوف
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('remove-row')) {
+        const row = e.target.closest('tr');
+        row.parentNode.removeChild(row);
+        updateCalculations();
+    }
+});
 
-// التواصل مع المالك
-function contactOwner(contactInfo) {
-    // يمكن إضافة منطق إضافي هنا مثل فتح تطبيق المراسلة
-    alert(`معلومات الاتصال: ${contactInfo}\n\nيمكنك الآن التواصل مع المالك مباشرة.`);
-}
-
-// إضافة بعض البيانات التجريبية إذا كانت قاعدة البيانات فارغة (للتجربة فقط)
-function addSampleData() {
-    database.ref('listings').once('value')
-        .then((snapshot) => {
-            if (!snapshot.exists()) {
-                const sampleListings = [
-                    {
-                        id: 1,
-                        gender: 'شباب',
-                        area: 'شرق',
-                        type: 'شقة',
-                        details: 'شقة مفروشة بالكامل بمنطقة هادئة قريبة من الجامعة، تحتوي على 3 غرف وصالة ومطبخ وحمامين',
-                        price: '1500',
-                        contact: '01012345678',
-                        date: '2023-10-15',
-                        timestamp: 1697385600000
-                    },
-                    {
-                        id: 2,
-                        gender: 'بنات',
-                        area: 'غرب',
-                        type: 'سرير',
-                        details: 'سرير في غرفة مشتركة مع طالبات، الشقة تحتوي على 3 غرف وحمام مشترك ومطبخ',
-                        price: '600',
-                        contact: '01123456789',
-                        date: '2023-10-10',
-                        timestamp: 1696953600000
-                    },
-                    {
-                        id: 3,
-                        gender: 'شباب',
-                        area: 'غرب',
-                        type: 'شقة',
-                        details: 'شقة جديدة بمنطقة غرب بني سويف، قريبة من وسائل المواصلات، تحتوي على غرفتين وصالة',
-                        price: '1200',
-                        contact: '01234567890',
-                        date: '2023-10-05',
-                        timestamp: 1696521600000
-                    }
-                ];
-                
-                sampleListings.forEach(listing => {
-                    database.ref('listings/' + listing.id).set(listing);
-                });
-                
-                console.log('تم إضافة البيانات التجريبية');
-            }
-        });
-}
-
-// استدعاء هذه الدالة مرة واحدة لإضافة بيانات تجريبية (يمكن إزالتها لاحقاً)
-// addSampleData();
+// تحديث الحسابات التلقائية
+function updateCalculations() {
+    // تحديث قائمة الدخل
+    const revenue2024 = parseFloat(document.querySelector('.income-input[data-year="2024"][data-item="revenue"]').value) || 0;
+    const revenue2025 = parseFloat(document.querySelector('.income-input[data-year="2025"][data-item="revenue"]').value) || 0;
+    
+    const cogs2024 = parseFloat(document.querySelector('.income-input[data-year="2024"][data-item="cogs"]').value) || 0;
+    const cogs2025 = parseFloat(document.querySelector('.income-input[data-year="2025"][data-item="cogs"]').value) || 0;
+    
+    const opex2024 = parseFloat(document.querySelector('.income-input[data-year="2024"][data-item="opex"]').value) || 0;
+    const opex2025 = parseFloat(document.querySelector('.income-input[data-year="2025"][data-item="opex"]').value) || 0;
+    
+    const interest2024 = parseFloat(document.querySelector('.income-input[data-year="2024"][data-item="interest"]').value) || 0;
+    const interest2025 = parseFloat(document.querySelector('.income-input[data-year="2025"][data-item="interest"]').value) ||
