@@ -16,12 +16,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // تحديث السنوات في الجداول
+    document.getElementById('year1').addEventListener('input', updateYearHeaders);
+    document.getElementById('year2').addEventListener('input', updateYearHeaders);
+    
     // تحديث الحسابات تلقائياً عند تغيير القيم
     document.addEventListener('input', updateCalculations);
     
     // تحديث الحسابات الأولي
+    updateYearHeaders();
     updateCalculations();
 });
+
+// تحديث عناوين السنوات في الجداول
+function updateYearHeaders() {
+    const year1 = document.getElementById('year1').value;
+    const year2 = document.getElementById('year2').value;
+    
+    document.getElementById('balance-year1').textContent = `${year1} (ج.م)`;
+    document.getElementById('balance-year2').textContent = `${year2} (ج.م)`;
+    document.getElementById('income-year1').textContent = `${year1} (ج.م)`;
+    document.getElementById('income-year2').textContent = `${year2} (ج.م)`;
+}
 
 // إضافة أصول متداولة
 document.getElementById('add-current-asset').addEventListener('click', function() {
@@ -108,8 +124,8 @@ function addBalanceItem(category, sectionName) {
     newRow.setAttribute('data-category', category);
     
     const itemNameCell = newRow.insertCell(0);
-    const input2024Cell = newRow.insertCell(1);
-    const input2025Cell = newRow.insertCell(2);
+    const inputYear1Cell = newRow.insertCell(1);
+    const inputYear2Cell = newRow.insertCell(2);
     const actionsCell = newRow.insertCell(3);
     
     const itemNameInput = document.createElement('input');
@@ -117,23 +133,24 @@ function addBalanceItem(category, sectionName) {
     itemNameInput.className = 'item-name';
     itemNameInput.placeholder = 'اسم البند';
     itemNameInput.value = 'بند جديد';
+    itemNameInput.addEventListener('input', updateCalculations);
     itemNameCell.appendChild(itemNameInput);
     
-    const input2024 = document.createElement('input');
-    input2024.type = 'number';
-    input2024.placeholder = '0';
-    input2024.className = 'balance-input';
-    input2024.setAttribute('data-year', '2024');
-    input2024.addEventListener('input', updateCalculations);
-    input2024Cell.appendChild(input2024);
+    const inputYear1 = document.createElement('input');
+    inputYear1.type = 'number';
+    inputYear1.placeholder = '0';
+    inputYear1.className = 'balance-input';
+    inputYear1.setAttribute('data-year', 'year1');
+    inputYear1.addEventListener('input', updateCalculations);
+    inputYear1Cell.appendChild(inputYear1);
     
-    const input2025 = document.createElement('input');
-    input2025.type = 'number';
-    input2025.placeholder = '0';
-    input2025.className = 'balance-input';
-    input2025.setAttribute('data-year', '2025');
-    input2025.addEventListener('input', updateCalculations);
-    input2025Cell.appendChild(input2025);
+    const inputYear2 = document.createElement('input');
+    inputYear2.type = 'number';
+    inputYear2.placeholder = '0';
+    inputYear2.className = 'balance-input';
+    inputYear2.setAttribute('data-year', 'year2');
+    inputYear2.addEventListener('input', updateCalculations);
+    inputYear2Cell.appendChild(inputYear2);
     
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
@@ -149,43 +166,4 @@ function addBalanceItem(category, sectionName) {
 }
 
 // دالة مساعدة لإضافة بنود قائمة الدخل
-function addIncomeItem(category, sectionName) {
-    const table = document.getElementById('income-body');
-    let insertIndex = -1;
-    
-    // البحث عن مكان الإدراج بناءً على القسم
-    for (let i = 0; i < table.rows.length; i++) {
-        if (table.rows[i].classList.contains('section-header') && 
-            table.rows[i].cells[0].textContent === sectionName) {
-            // البحث عن آخر صف في هذا القسم
-            for (let j = i + 1; j < table.rows.length; j++) {
-                if (table.rows[j].classList.contains('section-header') || 
-                    table.rows[j].classList.contains('calculated-row')) {
-                    insertIndex = j;
-                    break;
-                }
-            }
-            if (insertIndex === -1) insertIndex = table.rows.length - 1; // قبل الصف الأخير
-            break;
-        }
-    }
-    
-    if (insertIndex === -1) return;
-    
-    const newRow = table.insertRow(insertIndex);
-    newRow.setAttribute('data-category', category);
-    
-    const itemNameCell = newRow.insertCell(0);
-    const input2024Cell = newRow.insertCell(1);
-    const input2025Cell = newRow.insertCell(2);
-    const actionsCell = newRow.insertCell(3);
-    
-    const itemNameInput = document.createElement('input');
-    itemNameInput.type = 'text';
-    itemNameInput.className = 'item-name';
-    itemNameInput.placeholder = 'اسم البند';
-    itemNameInput.value = 'بند جديد';
-    itemNameCell.appendChild(itemNameInput);
-    
-    const input2024 = document.createElement('input');
-    input2024.type = 'number
+function addIncomeItem(category, sectionName
