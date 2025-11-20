@@ -3,381 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سكن طلاب بني سويف | تواصل مباشر</title>
+    <title>AFA - محلل القوائم المالية</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- إضافة Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-    <!-- شاشة التحميل -->
-    <div id="loader">
-        <div class="loader-content">
-            <div class="logo">
-                <i class="fas fa-home"></i>
-                <h1>سكن طلاب بني سويف</h1>
-            </div>
-            <div class="spinner"></div>
+    <header>
+        <div class="container header-content">
+            <div class="logo">AFA</div>
+            <nav>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+                <ul id="nav-menu">
+                    <li><a href="#">الرئيسية</a></li>
+                    <li><a href="#">التحليل</a></li>
+                    <li><a href="#">الأدوات</a></li>
+                    <li><a href="#">المقالات</a></li>
+                    <li><a href="#">اتصل بنا</a></li>
+                </ul>
+            </nav>
         </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>محلل القوائم المالية AFA</h1>
+            <p>أدخل بيانات قائمة الدخل والميزانية العمومية لشركتك واحصل على تحليل شامل للنسب المالية والتدفقات النقدية وتقييم الأداء</p>
+            <a href="#data-input" class="btn">ابدأ التحليل الآن</a>
+        </div>
+    </section>
+
+    <div class="container">
+        <section id="data-input" class="data-input-section">
+            <h2 class="section-title">إدخال البيانات المالية</h2>
+            <form id="financial-data-form">
+                <div class="form-group">
+                    <label for="company-name">اسم الشركة</label>
+                    <input type="text" id="company-name" placeholder="أدخل اسم الشركة" required>
+                </div>
+                
+                <div class="financial-tables">
+                    <!-- الميزانية العمومية -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <span>الميزانية العمومية</span>
+                            <div>
+                                <button type="button" class="btn btn-small" id="add-asset-item">+ إضافة أصل</button>
+                                <button type="button" class="btn btn-small" id="add-liability-item">+ إضافة خصوم/ملكية</button>
+                            </div>
+                        </div>
+                        <div class="table-scroll">
+                            <table id="balance-sheet">
+                                <thead>
+                                    <tr>
+                                        <th>البند</th>
+                                        <th>2024 (ج.م)</th>
+                                        <th>2025 (ج.م)</th>
+                                        <th>إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="section-header">
+                                        <td colspan="4">الأصول المتداولة</td>
+                                    </tr>
+                                    <tr>
+                                        <td>النقد وما في حكمه</td>
+                                        <td><input type="number" class="balance-input" data-category="current-assets" data-year="2024" data-item="cash" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-category="current-assets" data-year="2025" data-item="cash" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr class="section-header">
+                                        <td colspan="4">الأصول الثابتة</td>
+                                    </tr>
+                                    <tr>
+                                        <td>الأصول الثابتة</td>
+                                        <td><input type="number" class="balance-input" data-category="fixed-assets" data-year="2024" data-item="fixed-assets" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-category="fixed-assets" data-year="2025" data-item="fixed-assets" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr class="section-header">
+                                        <td colspan="4">الخصوم المتداولة</td>
+                                    </tr>
+                                    <tr>
+                                        <td>الديون قصيرة الأجل</td>
+                                        <td><input type="number" class="balance-input" data-category="current-liabilities" data-year="2024" data-item="short-debt" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-category="current-liabilities" data-year="2025" data-item="short-debt" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr class="section-header">
+                                        <td colspan="4">الخصوم طويلة الأجل</td>
+                                    </tr>
+                                    <tr>
+                                        <td>الديون طويلة الأجل</td>
+                                        <td><input type="number" class="balance-input" data-category="long-liabilities" data-year="2024" data-item="long-debt" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-category="long-liabilities" data-year="2025" data-item="long-debt" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr class="section-header">
+                                        <td colspan="4">حقوق الملكية</td>
+                                    </tr>
+                                    <tr>
+                                        <td>حقوق المساهمين</td>
+                                        <td><input type="number" class="balance-input" data-category="equity" data-year="2024" data-item="equity" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-category="equity" data-year="2025" data-item="equity" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="balance-validation" id="balance-validation">
+                            <div class="validation-message"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- قائمة الدخل -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <span>قائمة الدخل</span>
+                            <button type="button" class="btn btn-small" id="add-income-item">+ إضافة بند</button>
+                        </div>
+                        <div class="table-scroll">
+                            <table id="income-statement">
+                                <thead>
+                                    <tr>
+                                        <th>البند</th>
+                                        <th>2024 (ج.م)</th>
+                                        <th>2025 (ج.م)</th>
+                                        <th>إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>الإيرادات</td>
+                                        <td><input type="number" class="income-input" data-year="2024" data-item="revenue" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="2025" data-item="revenue" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>تكلفة البضاعة المباعة</td>
+                                        <td><input type="number" class="income-input" data-year="2024" data-item="cogs" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="2025" data-item="cogs" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr class="calculated-row">
+                                        <td>مجمل الربح</td>
+                                        <td id="gross-profit-2024">0</td>
+                                        <td id="gross-profit-2025">0</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>المصروفات التشغيلية</td>
+                                        <td><input type="number" class="income-input" data-year="2024" data-item="opex" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="2025" data-item="opex" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr class="calculated-row">
+                                        <td>الربح التشغيلي</td>
+                                        <td id="operating-profit-2024">0</td>
+                                        <td id="operating-profit-2025">0</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>الفوائد</td>
+                                        <td><input type="number" class="income-input" data-year="2024" data-item="interest" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="2025" data-item="interest" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>الضرائب</td>
+                                        <td><input type="number" class="income-input" data-year="2024" data-item="taxes" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="2025" data-item="taxes" placeholder="0"></td>
+                                        <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
+                                    </tr>
+                                    <tr class="calculated-row total-row">
+                                        <td>صافي الربح</td>
+                                        <td id="net-profit-2024">0</td>
+                                        <td id="net-profit-2025">0</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-large">تحليل البيانات</button>
+            </form>
+        </section>
+
+        <section id="analysis-controls" class="analysis-controls" style="display: none;">
+            <h2 class="section-title">نوع التحليل</h2>
+            <div class="analysis-buttons">
+                <button class="btn analysis-btn active" data-analysis="vertical">التحليل الرأسي</button>
+                <button class="btn analysis-btn" data-analysis="horizontal">التحليل الأفقي</button>
+                <button class="btn analysis-btn" data-analysis="ratios">النسب المالية</button>
+            </div>
+        </section>
+
+        <section id="results" class="results-section" style="display: none;">
+            <h2 class="section-title">نتائج التحليل المالي</h2>
+            <div class="results-container" id="results-container">
+                <!-- سيتم ملء هذا القسم بالنتائج ديناميكيًا -->
+            </div>
+        </section>
     </div>
 
-    <!-- الصفحة الرئيسية -->
-    <section id="main-page" class="page active">
-        <div class="container">
-            <header>
-                <div class="logo">
-                    <i class="fas fa-home"></i>
-                    <h1>سكن طلاب بني سويف</h1>
-                </div>
-                <p class="tagline">تواصل مباشر بين الطلاب وملاك السكن الجامعي</p>
-            </header>
-
-            <div class="content">
-                <h2>مرحباً بك في منصة سكن طلاب بني سويف</h2>
-                <p class="description">منصة غير ربحية تهدف إلى تسهيل عملية التواصل بين طلاب الجامعة وملاك الوحدات السكنية في بني سويف</p>
-                
-                <div class="user-selection">
-                    <div class="user-card" onclick="selectUserType('owner')">
-                        <div class="icon">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <h3>مالك سكن</h3>
-                        <p>أرغب في إضافة وحدة سكنية للإيجار</p>
-                    </div>
-                    
-                    <div class="user-card" onclick="selectUserType('student')">
-                        <div class="icon">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <h3>طالب</h3>
-                        <p>أبحث عن سكن جامعي مناسب</p>
-                    </div>
-                </div>
+    <footer>
+        <div class="container footer-content">
+            <div class="logo">AFA</div>
+            <div class="footer-links">
+                <a href="#">الخصوصية</a>
+                <a href="#">الشروط</a>
+                <a href="#">اتصل بنا</a>
+                <a href="#">المساعدة</a>
             </div>
-            
-            <footer>
-                <p>منصة غير ربحية - للتواصل بين الطلاب والملاك فقط</p>
-            </footer>
+            <p>جميع الحقوق محفوظة &copy; 2023 AFA - موقع تحليل القوائم المالية</p>
         </div>
-    </section>
-
-    <!-- نموذج المالك - النوع -->
-    <section id="owner-gender-page" class="page">
-        <div class="container">
-            <div class="progress-bar">
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
-            </div>
-            
-            <div class="content">
-                <h2>اختر نوع السكن</h2>
-                <p>من فضلك اختر نوع السكن الذي تود إضافته</p>
-                
-                <div class="options-grid">
-                    <div class="option-card" onclick="selectOption('gender', 'شباب')">
-                        <div class="option-icon">
-                            <i class="fas fa-male"></i>
-                        </div>
-                        <h3>سكن للشباب</h3>
-                    </div>
-                    
-                    <div class="option-card" onclick="selectOption('gender', 'بنات')">
-                        <div class="option-icon">
-                            <i class="fas fa-female"></i>
-                        </div>
-                        <h3>سكن للبنات</h3>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- نموذج المالك - المنطقة -->
-    <section id="owner-area-page" class="page">
-        <div class="container">
-            <div class="progress-bar">
-                <div class="progress-step completed"></div>
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
-            </div>
-            
-            <div class="content">
-                <h2>اختر المنطقة</h2>
-                <p>من فضلك اختر المنطقة التي يقع بها السكن</p>
-                
-                <div class="options-grid">
-                    <div class="option-card" onclick="selectOption('area', 'شرق')">
-                        <div class="option-icon">
-                            <i class="fas fa-sun"></i>
-                        </div>
-                        <h3>شرق بني سويف</h3>
-                    </div>
-                    
-                    <div class="option-card" onclick="selectOption('area', 'غرب')">
-                        <div class="option-icon">
-                            <i class="fas fa-moon"></i>
-                        </div>
-                        <h3>غرب بني سويف</h3>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- نموذج المالك - نوع الوحدة -->
-    <section id="owner-type-page" class="page">
-        <div class="container">
-            <div class="progress-bar">
-                <div class="progress-step completed"></div>
-                <div class="progress-step completed"></div>
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-            </div>
-            
-            <div class="content">
-                <h2>اختر نوع الوحدة</h2>
-                <p>من فضلك اختر نوع الوحدة السكنية</p>
-                
-                <div class="options-grid">
-                    <div class="option-card" onclick="selectOption('type', 'شقة')">
-                        <div class="option-icon">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <h3>شقة كاملة</h3>
-                    </div>
-                    
-                    <div class="option-card" onclick="selectOption('type', 'سرير')">
-                        <div class="option-icon">
-                            <i class="fas fa-bed"></i>
-                        </div>
-                        <h3>سرير مفرد</h3>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- نموذج المالك - التفاصيل -->
-    <section id="owner-details-page" class="page">
-        <div class="container">
-            <div class="progress-bar">
-                <div class="progress-step completed"></div>
-                <div class="progress-step completed"></div>
-                <div class="progress-step completed"></div>
-                <div class="progress-step active"></div>
-            </div>
-            
-            <div class="content">
-                <h2>أدخل التفاصيل</h2>
-                <p>من فضلك أدخل تفاصيل الوحدة السكنية</p>
-                
-                <form id="owner-form">
-                    <div class="form-group">
-                        <label for="details">تفاصيل الوحدة</label>
-                        <textarea id="details" placeholder="أدخل وصف مفصل للوحدة السكنية..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="price">السعر الشهري (جنيه مصري)</label>
-                        <input type="number" id="price" placeholder="أدخل السعر الشهري" min="0" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contact">معلومات الاتصال</label>
-                        <input type="text" id="contact" placeholder="رقم الهاتف أو وسيلة التواصل" required>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">
-                        إضافة الوحدة <i class="fas fa-check"></i>
-                    </button>
-                </form>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- نموذج الطالب - النوع -->
-    <section id="student-gender-page" class="page">
-        <div class="container">
-            <div class="progress-bar">
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
-            </div>
-            
-            <div class="content">
-                <h2>اختر النوع</h2>
-                <p>من فضلك اختر النوع المناسب لك</p>
-                
-                <div class="options-grid">
-                    <div class="option-card" onclick="selectOption('studentGender', 'شاب')">
-                        <div class="option-icon">
-                            <i class="fas fa-male"></i>
-                        </div>
-                        <h3>شاب</h3>
-                    </div>
-                    
-                    <div class="option-card" onclick="selectOption('studentGender', 'بنت')">
-                        <div class="option-icon">
-                            <i class="fas fa-female"></i>
-                        </div>
-                        <h3>بنت</h3>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- نموذج الطالب - المنطقة -->
-    <section id="student-area-page" class="page">
-        <div class="container">
-            <div class="progress-bar">
-                <div class="progress-step completed"></div>
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-            </div>
-            
-            <div class="content">
-                <h2>اختر المنطقة</h2>
-                <p>من فضلك اختر المنطقة المفضلة للسكن</p>
-                
-                <div class="options-grid">
-                    <div class="option-card" onclick="selectOption('studentArea', 'شرق')">
-                        <div class="option-icon">
-                            <i class="fas fa-sun"></i>
-                        </div>
-                        <h3>شرق بني سويف</h3>
-                    </div>
-                    
-                    <div class="option-card" onclick="selectOption('studentArea', 'غرب')">
-                        <div class="option-icon">
-                            <i class="fas fa-moon"></i>
-                        </div>
-                        <h3>غرب بني سويف</h3>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- نموذج الطالب - نوع الوحدة -->
-    <section id="student-type-page" class="page">
-        <div class="container">
-            <div class="progress-bar">
-                <div class="progress-step completed"></div>
-                <div class="progress-step completed"></div>
-                <div class="progress-step active"></div>
-            </div>
-            
-            <div class="content">
-                <h2>اختر نوع السكن</h2>
-                <p>من فضلك اختر نوع السكن المطلوب</p>
-                
-                <div class="options-grid">
-                    <div class="option-card" onclick="selectOption('studentType', 'شقة')">
-                        <div class="option-icon">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <h3>شقة كاملة</h3>
-                    </div>
-                    
-                    <div class="option-card" onclick="selectOption('studentType', 'سرير')">
-                        <div class="option-icon">
-                            <i class="fas fa-bed"></i>
-                        </div>
-                        <h3>سرير مفرد</h3>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- صفحة نتائج البحث للطالب -->
-    <section id="student-results-page" class="page">
-        <div class="container">
-            <div class="content">
-                <h2>الوحدات المتاحة</h2>
-                <p>الوحدات السكنية التي تطابق معايير البحث</p>
-                
-                <div id="listings-container" class="listings-container">
-                    <!-- سيتم عرض الوحدات هنا -->
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <button class="btn-secondary" onclick="goBack()">
-                    <i class="fas fa-arrow-right"></i> رجوع
-                </button>
-                <button class="btn-primary" onclick="goToMainPage()">
-                    <i class="fas fa-home"></i> الصفحة الرئيسية
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- صفحة تأكيد إضافة الوحدة -->
-    <section id="confirmation-page" class="page">
-        <div class="container">
-            <div class="content confirmation-content">
-                <div class="confirmation-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h2>تمت الإضافة بنجاح</h2>
-                <p>شكراً لك، تمت إضافة الوحدة السكنية بنجاح إلى المنصة</p>
-                <p>سيتمكن الطلاب الآن من رؤية الوحدة والاتصال بك</p>
-                
-                <button class="btn-primary" onclick="goToMainPage()">
-                    <i class="fas fa-home"></i> العودة للصفحة الرئيسية
-                </button>
-            </div>
-        </div>
-    </section>
+    </footer>
 
     <script src="script.js"></script>
 </body>
