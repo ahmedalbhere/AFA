@@ -91,8 +91,7 @@ nav ul li a:hover {
 }
 
 .hero {
-    background: linear-gradient(rgba(26, 26, 46, 0.9), rgba(13, 13, 26, 0.95)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a1a2e"/><path d="M0 0L100 100M100 0L0 100" stroke="%230f3460" stroke-width="1"/></svg>');
-    background-size: cover;
+    background: linear-gradient(rgba(26, 26, 46, 0.9), rgba(13, 13, 26, 0.95));
     color: white;
     padding: 3rem 0;
     text-align: center;
@@ -151,14 +150,6 @@ nav ul li a:hover {
 
 .btn-danger:hover {
     background-color: #d6335c;
-}
-
-.btn-success {
-    background-color: var(--success-color);
-}
-
-.btn-success:hover {
-    background-color: #3d8b2d;
 }
 
 .section-title {
@@ -249,6 +240,12 @@ nav ul li a:hover {
     gap: 10px;
 }
 
+.table-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 .table-scroll {
     overflow-x: auto;
 }
@@ -313,6 +310,10 @@ table input {
 table input:focus {
     outline: none;
     border-color: var(--accent-color);
+}
+
+.item-name {
+    text-align: right !important;
 }
 
 .balance-validation {
@@ -480,6 +481,7 @@ footer {
     .header-content {
         flex-direction: column;
         text-align: center;
+        gap: 10px;
     }
     
     .mobile-menu-btn {
@@ -541,6 +543,10 @@ footer {
         align-items: stretch;
     }
     
+    .table-actions {
+        justify-content: center;
+    }
+    
     .analysis-buttons {
         flex-direction: column;
     }
@@ -590,5 +596,13 @@ footer {
     .btn {
         padding: 8px 16px;
         font-size: 0.85rem;
+    }
+    
+    .table-actions {
+        flex-direction: column;
+    }
+    
+    .table-actions .btn {
+        width: 100%;
     }
 }
