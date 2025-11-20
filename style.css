@@ -207,6 +207,13 @@ nav ul li a:hover {
     border-color: var(--accent-color);
 }
 
+.years-input {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 2rem;
+}
+
 .financial-tables {
     display: grid;
     grid-template-columns: 1fr;
@@ -535,6 +542,10 @@ footer {
     
     .data-input-section, .results-section, .analysis-controls {
         padding: 1rem;
+    }
+    
+    .years-input {
+        grid-template-columns: 1fr;
     }
     
     .table-header {
