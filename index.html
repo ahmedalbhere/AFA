@@ -39,6 +39,17 @@
                     <label for="company-name">اسم الشركة</label>
                     <input type="text" id="company-name" placeholder="أدخل اسم الشركة" required>
                 </div>
+
+                <div class="years-input">
+                    <div class="form-group">
+                        <label for="year1">السنة الأولى</label>
+                        <input type="number" id="year1" value="2024" min="2000" max="2030">
+                    </div>
+                    <div class="form-group">
+                        <label for="year2">السنة الثانية</label>
+                        <input type="number" id="year2" value="2025" min="2000" max="2030">
+                    </div>
+                </div>
                 
                 <div class="financial-tables">
                     <!-- الميزانية العمومية -->
@@ -56,8 +67,8 @@
                                 <thead>
                                     <tr>
                                         <th>البند</th>
-                                        <th>2024 (ج.م)</th>
-                                        <th>2025 (ج.م)</th>
+                                        <th id="balance-year1">2024 (ج.م)</th>
+                                        <th id="balance-year2">2025 (ج.م)</th>
                                         <th>إجراءات</th>
                                     </tr>
                                 </thead>
@@ -67,8 +78,8 @@
                                     </tr>
                                     <tr data-category="current-assets">
                                         <td><input type="text" class="item-name" value="النقدية" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="balance-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="balance-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="section-header">
@@ -76,8 +87,8 @@
                                     </tr>
                                     <tr data-category="fixed-assets">
                                         <td><input type="text" class="item-name" value="الأصول الثابتة" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="balance-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="balance-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="section-header">
@@ -85,8 +96,8 @@
                                     </tr>
                                     <tr data-category="current-liabilities">
                                         <td><input type="text" class="item-name" value="الديون قصيرة الأجل" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="balance-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="balance-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="section-header">
@@ -94,8 +105,8 @@
                                     </tr>
                                     <tr data-category="long-liabilities">
                                         <td><input type="text" class="item-name" value="الديون طويلة الأجل" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="balance-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="balance-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="section-header">
@@ -103,21 +114,21 @@
                                     </tr>
                                     <tr data-category="equity">
                                         <td><input type="text" class="item-name" value="حقوق المساهمين" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="balance-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="balance-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="balance-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <!-- المجاميع -->
                                     <tr class="total-row">
                                         <td><strong>إجمالي الأصول</strong></td>
-                                        <td id="total-assets-2024">0</td>
-                                        <td id="total-assets-2025">0</td>
+                                        <td id="total-assets-year1">0</td>
+                                        <td id="total-assets-year2">0</td>
                                         <td></td>
                                     </tr>
                                     <tr class="total-row">
                                         <td><strong>إجمالي الخصوم وحقوق الملكية</strong></td>
-                                        <td id="total-liabilities-equity-2024">0</td>
-                                        <td id="total-liabilities-equity-2025">0</td>
+                                        <td id="total-liabilities-equity-year1">0</td>
+                                        <td id="total-liabilities-equity-year2">0</td>
                                         <td></td>
                                     </tr>
                                 </tbody>
@@ -142,8 +153,8 @@
                                 <thead>
                                     <tr>
                                         <th>البند</th>
-                                        <th>2024 (ج.م)</th>
-                                        <th>2025 (ج.م)</th>
+                                        <th id="income-year1">2024 (ج.م)</th>
+                                        <th id="income-year2">2025 (ج.م)</th>
                                         <th>إجراءات</th>
                                     </tr>
                                 </thead>
@@ -153,8 +164,8 @@
                                     </tr>
                                     <tr data-category="revenue">
                                         <td><input type="text" class="item-name" value="إيرادات المبيعات" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="income-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="income-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="section-header">
@@ -162,14 +173,14 @@
                                     </tr>
                                     <tr data-category="cogs">
                                         <td><input type="text" class="item-name" value="تكلفة البضاعة المباعة" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="income-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="income-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="calculated-row">
                                         <td><strong>مجمل الربح</strong></td>
-                                        <td id="gross-profit-2024">0</td>
-                                        <td id="gross-profit-2025">0</td>
+                                        <td id="gross-profit-year1">0</td>
+                                        <td id="gross-profit-year2">0</td>
                                         <td></td>
                                     </tr>
                                     <tr class="section-header">
@@ -177,14 +188,14 @@
                                     </tr>
                                     <tr data-category="expenses">
                                         <td><input type="text" class="item-name" value="المصروفات التشغيلية" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="income-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="income-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="calculated-row">
                                         <td><strong>الربح التشغيلي</strong></td>
-                                        <td id="operating-profit-2024">0</td>
-                                        <td id="operating-profit-2025">0</td>
+                                        <td id="operating-profit-year1">0</td>
+                                        <td id="operating-profit-year2">0</td>
                                         <td></td>
                                     </tr>
                                     <tr class="section-header">
@@ -192,14 +203,14 @@
                                     </tr>
                                     <tr data-category="other">
                                         <td><input type="text" class="item-name" value="الفوائد" placeholder="اسم البند"></td>
-                                        <td><input type="number" class="income-input" data-year="2024" placeholder="0"></td>
-                                        <td><input type="number" class="income-input" data-year="2025" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year1" placeholder="0"></td>
+                                        <td><input type="number" class="income-input" data-year="year2" placeholder="0"></td>
                                         <td><button type="button" class="btn btn-danger btn-small remove-row">حذف</button></td>
                                     </tr>
                                     <tr class="calculated-row total-row">
                                         <td><strong>صافي الربح</strong></td>
-                                        <td id="net-profit-2024">0</td>
-                                        <td id="net-profit-2025">0</td>
+                                        <td id="net-profit-year1">0</td>
+                                        <td id="net-profit-year2">0</td>
                                         <td></td>
                                     </tr>
                                 </tbody>
