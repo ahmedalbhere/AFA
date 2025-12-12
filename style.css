@@ -446,6 +446,77 @@ table input:focus {
     color: var(--text-color);
 }
 
+/* التعديلات الجديدة للتحليل الإضافي */
+.ratio-interpretation {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.cash-flow-summary {
+    background-color: var(--light-color);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.cash-flow-details {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+}
+
+.cash-flow-details h4 {
+    color: var(--accent-color);
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+/* تحسينات للرموز والأيقونات */
+.ratio-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-left: 5px;
+    vertical-align: middle;
+    background-color: var(--secondary-color);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 0.8rem;
+}
+
 footer {
     background-color: var(--primary-color);
     color: white;
@@ -582,6 +653,20 @@ footer {
     .footer-links a {
         margin: 5px 0;
     }
+    
+    .ratio-interpretation {
+        font-size: 0.8rem;
+    }
+    
+    .summary-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        gap: 3px;
+    }
 }
 
 /* تحسينات إضافية للشاشات الصغيرة جداً */
@@ -615,5 +700,87 @@ footer {
     
     .table-actions .btn {
         width: 100%;
+    }
+    
+    .analysis-table {
+        min-width: 400px;
+    }
+    
+    .result-value {
+        font-size: 1.1rem;
+    }
+}
+
+/* أنيميشن بسيطة للتحميل */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.results-section, .analysis-controls {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* تنسيقات إضافية للأزرار */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+    background-color: var(--secondary-color);
+    transform: none;
+    box-shadow: none;
+}
+
+/* تنسيقات للرسائل التنبيهية */
+.alert {
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background-color: rgba(78, 159, 61, 0.1);
+    border-left-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.alert-warning {
+    background-color: rgba(255, 154, 60, 0.1);
+    border-left-color: var(--warning-color);
+    color: var(--warning-color);
+}
+
+.alert-info {
+    background-color: rgba(15, 52, 96, 0.1);
+    border-left-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+/* تحسينات للجدول في وضع الطباعة */
+@media print {
+    .btn, .table-actions, .mobile-menu-btn, nav {
+        display: none !important;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .data-input-section, .results-section, .analysis-controls {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    body {
+        background-color: white;
+        color: black;
+    }
+    
+    .result-card {
+        border: 1px solid #ddd;
     }
 }
