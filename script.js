@@ -378,9 +378,12 @@ document.getElementById('financial-data-form').addEventListener('submit', functi
     // عرض عناصر التحكم
     document.getElementById('analysis-controls').style.display = 'block';
     document.getElementById('results').style.display = 'block';
+    document.getElementById('additional-analysis').style.display = 'block';
+    document.getElementById('additional-results').style.display = 'block';
     
     // إعداد أحداث أزرار التحليل
     setupAnalysisButtons(financialData);
+    setupAdditionalAnalysisButtons(financialData);
     
     // عرض التحليل الافتراضي (الرأسي)
     showVerticalAnalysis(financialData);
@@ -396,7 +399,9 @@ function collectFinancialData() {
         year1: document.getElementById('year1').value,
         year2: document.getElementById('year2').value,
         balanceSheet: {},
-        incomeStatement: {}
+        incomeStatement: {},
+        inventory: { year1: 0, year2: 0 },
+        cash: { year1: 0, year2: 0 }
     };
     
     // جمع بيانات الميزانية العمومية
@@ -414,6 +419,19 @@ function collectFinancialData() {
             year1: year1Value,
             year2: year2Value
         };
+        
+        // البحث عن المخزون والنقدية
+        if (category === 'current-assets') {
+            if (itemName.includes('مخزون') || itemName.includes('بضاعة') || itemName.includes('المخزون')) {
+                data.inventory.year1 = year1Value;
+                data.inventory.year2 = year2Value;
+            }
+            
+            if (itemName.includes('نقدي') || itemName.includes('النقدية') || itemName.includes('الصندوق')) {
+                data.cash.year1 = year1Value;
+                data.cash.year2 = year2Value;
+            }
+        }
     });
     
     // جمع بيانات قائمة الدخل
@@ -682,19 +700,79 @@ function calculateFinancialRatios(data) {
     return ratios;
 }
 
-// الحصول على اسم الفئة بالعربية
-function getCategoryName(category) {
-    const categoryNames = {
-        'current-assets': 'الأصول المتداولة',
-        'fixed-assets': 'الأصول الثابتة',
-        'current-liabilities': 'الخصوم المتداولة',
-        'long-liabilities': 'الخصوم طويلة الأجل',
-        'equity': 'حقوق الملكية',
-        'revenue': 'الإيرادات',
-        'cogs': 'تكلفة الإيرادات',
-        'expenses': 'المصروفات التشغيلية',
-        'other': 'الإيرادات والمصروفات الأخرى'
-    };
-    
-    return categoryNames[category] || category;
+// إعداد أزرار التحليل الإضافي
+function setupAdditionalAnalysisButtons(financialData) {
+    document.querySelectorAll('#additional-analysis .analysis-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // إزالة النشاط من جميع الأزرار
+            document.querySelectorAll('#additional-analysis .analysis-btn').forEach(b => b.classList.remove('active'));
+            // إضافة النشاط للزر المحدد
+            this.classList.add('active');
+            
+            const analysisType = this.getAttribute('data-analysis');
+            
+            switch(analysisType) {
+                case 'liquidity-ratios':
+                    showLiquidityRatios(financialData);
+                    break;
+                case 'cash-flow':
+                    showCashFlowStatement(financialData);
+                    break;
+            }
+        });
+    });
 }
+
+// عرض تحليل النسب السيولة
+function showLiquidityRatios(financialData) {
+    const resultsContainer = document.getElementById('additional-results-container');
+    
+    // حساب النسب
+    const ratios = calculateLiquidityRatios(financialData);
+    
+    let html = `
+        <h3>تحليل نسب السيولة - ${financialData.companyName}</h3>
+        <div class="results-grid">
+    `;
+    
+    for (const [ratioName, values] of Object.entries(ratios)) {
+        const year1Value = values.year1 !== null ? values.year1.toFixed(2) : 'N/A';
+        const year2Value = values.year2 !== null ? values.year2.toFixed(2) : 'N/A';
+        const interpretation = getRatioInterpretation(ratioName, values.year2);
+        
+        html += `
+            <div class="result-card">
+                <h3>${ratioName}</h3>
+                <div class="result-value">${year2Value}</div>
+                <p>${financialData.year1}: ${year1Value}</p>
+                <p class="ratio-interpretation">${interpretation}</p>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    resultsContainer.innerHTML = html;
+}
+
+// حساب نسب السيولة
+function calculateLiquidityRatios(data) {
+    const ratios = {};
+    
+    // جمع البيانات الأساسية
+    const currentAssetsYear1 = Object.values(data.balanceSheet['current-assets'] || {}).reduce((sum, item) => sum + item.year1, 0);
+    const currentAssetsYear2 = Object.values(data.balanceSheet['current-assets'] || {}).reduce((sum, item) => sum + item.year2, 0);
+    
+    const currentLiabilitiesYear1 = Object.values(data.balanceSheet['current-liabilities'] || {}).reduce((sum, item) => sum + item.year1, 0);
+    const currentLiabilitiesYear2 = Object.values(data.balanceSheet['current-liabilities'] || {}).reduce((sum, item) => sum + item.year2, 0);
+    
+    // استخدام المخزون المحفوظ في البيانات
+    const inventoryYear1 = data.inventory.year1 || 0;
+    const inventoryYear2 = data.inventory.year2 || 0;
+    
+    // استخدام النقدية المحفوظة في البيانات
+    const cashYear1 = data.cash.year1 || 0;
+    const cashYear2 = data.cash.year2 || 0;
+    
+    // حساب النسب
+    // 1. نسبة التداول (الأصول المتداولة / الخصوم المتداولة)
+    ratios['نسبة الت
